@@ -1,0 +1,19 @@
+site_name: KepMaps
+site_description: Package to provide easy access to commonly used neuroimaging parcellations.
+site_author: Gal Kepler
+
+repo_url: https://github.com/GalKepler/kepmaps
+edit_uri: https://github.com/GalKepler/kepmaps/edit/main/docs
+
+theme: readthedocs
+
+markdown_extensions:
+  - codehilite
+
+nav:
+  - Home: index.md
+  - Advanced: advanced.md
+  - About:
+    - Release Notes: about/changelog.md
+    - Contributor Guide: about/contributing.md
+    - License: about/license.md
