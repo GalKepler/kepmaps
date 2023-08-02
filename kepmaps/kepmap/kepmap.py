@@ -8,13 +8,18 @@ import nibabel as nib
 import numpy as np
 import pandas as pd
 
+PACKAGE_BASE_PATH = Path(__file__).parent.parent.parent
+
 
 class KepMap:
     """
     A class used to represent a parcellation atlas
     """
 
-    CONFIGURED_ATLASES_PATH = Path("data/configured_atlases")
+    # CONFIGURED_ATLASES_PATH = Path("../../data/configured_atlases").absolute()
+    CONFIGURED_ATLASES_PATH = (
+        Path(__file__).parent.parent.parent / "data" / "configured_atlases"
+    )
 
     def __init__(
         self,
@@ -116,6 +121,7 @@ class KepMap:
             path = self.path / f"{self.name}.obj"
         else:
             path = Path(path)
+
         with open(path, "wb") as f:
             pickle.dump(self, f)
 

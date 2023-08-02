@@ -36,6 +36,8 @@ minilog = "*"
 nibabel = "^5.1.0"
 numpy = "^1.25.2"
 pandas = "^2.0.3"
+osfclient = "^0.0.5"
+neuromaps = "^0.0.4"
 
 [tool.poetry.dev-dependencies]
 
