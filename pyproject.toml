@@ -38,6 +38,7 @@ numpy = "^1.25.2"
 pandas = "^2.0.3"
 osfclient = "^0.0.5"
 neuromaps = "^0.0.4"
+pybids = "^0.16.1"
 
 [tool.poetry.dev-dependencies]
 

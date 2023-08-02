@@ -1,0 +1,8 @@
+{
+    "path_patterns":
+        [
+            "space-{space}[_atlas-{atlas}]_res-{res}_{suffix<T1w|T2w|probseg|dseg>|dseg}{extension<.nii|.nii.gz|.json|.csv|.tsv>|.nii.gz}",
+            "space-{space}_res-{res}[_desc-{desc}]_{suffix<T1w|T2w|probseg|dseg|mask>|T1w}{extension<.nii|.nii.gz|.json|.csv|.tsv>|.nii.gz}",
+            "[hemi-{hemi}_]space-{space}_atlas-{atlas}[_den-{den}]{extension<.label.gii|.dlabel.nii>|.label.gii}"
+        ]
+}
