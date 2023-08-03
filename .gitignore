@@ -51,4 +51,4 @@ coverage.xml
 
 # Notebooks
 .ipynb_checkpoints/
-notebooks/profile_default/trials.ipynb
+notebooks

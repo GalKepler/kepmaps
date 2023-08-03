@@ -45,6 +45,63 @@ class Annotation(Dataset):
             if not isinstance(destination.get(key), File)
         ]
 
+    def _get_spaces(self, annotation: str, entities: dict = None) -> list:
+        """
+        Return a list of spaces for a given annotation.
+
+        Parameters
+        ----------
+        annotation : str
+            Annotation to query.
+        entities : dict, optional
+            Entities to query, by default None
+
+        Returns
+        -------
+        list
+            List of spaces for a given annotation.
+        """
+        spaces = entities.get("space") if entities is not None else None
+        if spaces is None:
+            spaces = self.query_available_spaces(annotation)
+        else:
+            if not isinstance(spaces, list):
+                spaces = [spaces]
+        return spaces
+
+    def _get_space_data(
+        self, annotation_data: dict, space: str, entities: dict = None
+    ) -> dict:
+        """
+        Return a dictionary of the space data.
+
+        Parameters
+        ----------
+        annotation_data : dict
+            Dictionary of the annotation data.
+        space : str
+            Space to query.
+        entities : dict, optional
+            Entities to query, by default None
+
+        Returns
+        -------
+        dict
+            Dictionary of the space data.
+        """
+        result = annotation_data.get(space)
+        if "den" in entities:
+            result = result.get(entities.get("den"))
+        for key in result:
+            file_entities = parse_file_entities(key)
+            # check if entities match, if not, don't add to result
+            for entity, entity_value in entities.items():
+                if entity in file_entities:
+                    if entity_value != file_entities.get(entity):
+                        result.pop(key)
+                        break
+        return result
+
     def fetch(
         self,
         annotation: str,
@@ -68,30 +125,29 @@ class Annotation(Dataset):
         dict
             Dictionary of the fetched annotation.
         """
-        spaces = entities.get("space")
-        if spaces is None:
-            spaces = self.query_available_spaces(annotation)
-        else:
-            if not isinstance(spaces, list):
-                spaces = [spaces]
-
+        spaces = self._get_spaces(annotation, entities)
         annotation_data = self.tree.get(self.SUBFOLDER_NAME).get(annotation)
         result = {}
         for space in spaces:
-            space_result = annotation_data.get(space)
-            if "den" in entities:
-                space_result = space_result.get(entities.get("den"))
-            for key, file in space_result.items():
-                file_entities = parse_file_entities(key)
-                # check if entities match, if not, don't add to result
-                for entity, entity_value in entities.items():
-                    if entity in file_entities:
-                        if entity_value != file_entities.get(entity):
-                            space_result.pop(key)
-                            break
-                
-            result[space] = space_result
-            
+            result[space] = self._get_space_data(
+                annotation_data, space, entities
+            )
+        result["supp"] = {
+            key: annotation_data.get(key)
+            for key in [f"atlas-{annotation}_dseg.tsv", "references.bib"]
+        }
+
+        for main_key, sub_results in result.items():
+            for key, file in sub_results.items():
+                file_destination = Path(destination) / file.path.replace(
+                    self.SUBFOLDER_NAME, ""
+                ).replace("//", "")
+                print(file_destination)
+                file_destination.parent.mkdir(parents=True, exist_ok=True)
+                with open(str(file_destination), "wb") as f:
+                    file.write_to(f)
+                # result[main_key][key].update(file_destination)
+
         return result
 
     @property
